@@ -1,0 +1,9 @@
+# 3NCRYPT3D panel
+audit.log
+sandbox/*
+!sandbox/.htaccess
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

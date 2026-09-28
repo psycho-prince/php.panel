@@ -1,0 +1,28 @@
+# ─── 3NCRYPT3D SANDBOX — Apache hardening ─────────────────────────────────────
+# Scope: everything inside ./sandbox/ only.
+# Goal: make it structurally impossible for uploaded content to execute as code,
+#       and make served files behave as attachments (no inline XSS).
+
+# 1. Turn off the PHP engine inside the sandbox.
+php_flag engine off
+
+# 2. Explicitly deny HTTP access to the most dangerous extensions.
+<FilesMatch "(?i)\.(php|php3|php4|php5|php7|php8|phtml|phar|inc|hphp|ctp|module|htaccess|htpasswd|env)$">
+    Require all denied
+</FilesMatch>
+
+# 3. Block dotfiles (e.g. .git, .env) from being served.
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# 4. Force every file in the sandbox to be served as a download attachment,
+#    with no-sniff so browsers won't try to render HTML/JS inline.
+<FilesMatch "*">
+    Header set Content-Disposition "attachment"
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+</FilesMatch>
+
+# 5. Optional: disable directory indexes inside sandbox.
+Options -Indexes
